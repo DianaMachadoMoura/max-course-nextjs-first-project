@@ -1,4 +1,4 @@
-import MeetupList from '../components/meetups/MeetupList';
+import MeetupList from 'components/meetups/MeetupList';
 
 const DUMMY_MEETUPS = [
   {
@@ -19,8 +19,26 @@ const DUMMY_MEETUPS = [
   },
 ];
 
-const Home = () => {
-  return <MeetupList meetups={DUMMY_MEETUPS} />;
+const Home = (props) => {
+  return <MeetupList meetups={props.meetups} />;
+};
+
+// fetching data for pre-rendering (using Static Site Generation SSG)
+// this code that is executed during building (it will never execute on the client)
+// if revalidate is set, will be executed in the server, every x seconds
+// name is mandatorily getStaticProps
+// return value should be an object
+// props property (optional) has to be named props
+export const getStaticProps = async () => {
+  // fetch data from an API
+  return {
+    props: {
+      meetups: DUMMY_MEETUPS,
+      // for incremental Static Generation -> this page would be regenerated on the server at least every 10 seconds 
+      // if there are requests coming in for this page
+      revalidate: 10,
+    },
+  };
 };
 
 export default Home;
