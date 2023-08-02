@@ -34,11 +34,25 @@ export const getStaticProps = async () => {
   return {
     props: {
       meetups: DUMMY_MEETUPS,
-      // for incremental Static Generation -> this page would be regenerated on the server at least every 10 seconds 
+      // for incremental Static Generation -> this page would be regenerated on the server at least every 10 seconds
       // if there are requests coming in for this page
       revalidate: 10,
     },
   };
 };
+
+// this function will always run on the server, on every incoming request
+// when to use: 
+// - access to the concrete request object is needed (no access to it when using getStaticProps)
+// - when data changes multiple times every second (revalidate won't help)
+// export const getServerSideProps = async (context) => {
+//   const req = context.req;  //request object
+//   const res = context.res;  //response object
+
+//   // fetch data from an API
+//   return {
+//     props: { meetups: DUMMY_MEETUPS },
+//   };
+// };
 
 export default Home;
