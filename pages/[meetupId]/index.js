@@ -1,58 +1,74 @@
+import { MongoClient, ObjectId } from 'mongodb';
+
 // our-domain.com/[meetupId]
 
 import MeetupInfo from 'components/meetups/MeetupInfo';
 
-const MeetupDetailsPage = () => {
+const MeetupDetailsPage = (props) => {
+  const { image, title, address, description } = props.meetupData;
+
   return (
     <MeetupInfo
-      image="https://images.pexels.com/photos/2549573/pexels-photo-2549573.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-      title="The first meetup"
-      address="Praça da Ribeira, 1025 Porto"
-      description="The meetup description"
+      image={image}
+      title={title}
+      address={address}
+      description={description}
     />
   );
 };
 
-// getStaticPaths is needed in dynamic pages 
+// getStaticPaths is needed in dynamic pages
 // to define fo which dynamic parameter values
 // the page should be pre-generated
 export const getStaticPaths = async () => {
-  // fetch meetup ids
+  const client = await MongoClient.connect(
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.en5gbtf.mongodb.net/meetups?retryWrites=true&w=majority`
+  );
+  const db = client.db();
+
+  const meetupsCollection = db.collection('meetups');
+
+  const meetups = await meetupsCollection.find({}, { _id: 1 }).toArray();
+
+  client.close();
 
   return {
-    // fallback allows us to define only for some paths, 
+    // fallback allows us to define only for some paths,
     // instead of all paths
     // set to false if all supported paths are defined here
     fallback: false,
-    paths: [
-      {
-        params: {
-          meetupId: 'm1',
-        },
-      },
-      {
-        params: {
-          meetupId: 'm2',
-        },
-      },
-    ],
+    paths: meetups.map((meetup) => ({
+      params: { meetupId: meetup._id.toString() },
+    })),
   };
 };
 
 export const getStaticProps = async (context) => {
   const meetupId = context.params.meetupId;
 
-  // fetch data for a single meetup
+  const client = await MongoClient.connect(
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.en5gbtf.mongodb.net/meetups?retryWrites=true&w=majority`
+  );
+  const db = client.db();
+
+  const meetupsCollection = db.collection('meetups');
+
+  // const meetups = await meetupsCollection.find({}, { _id: 1 }).toArray();
+
+  const selectedMeetup = await meetupsCollection.findOne({
+    _id: new ObjectId(meetupId),
+  });
+
+  client.close();
 
   return {
     props: {
       meetupData: {
-        id: meetupId,
-        image:
-          'https://images.pexels.com/photos/2549573/pexels-photo-2549573.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-        title: 'The first meetup',
-        address: 'Praça da Ribeira, 1025 Porto',
-        description: 'The meetup description',
+        id: selectedMeetup._id.toString(),
+        title: selectedMeetup.title,
+        address: selectedMeetup.address,
+        image: selectedMeetup.image,
+        description: selectedMeetup.description
       },
     },
   };

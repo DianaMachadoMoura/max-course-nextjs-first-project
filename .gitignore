@@ -1,7 +1,7 @@
 node_modules/
 .next/
-.*.env
 .history
 .idea
 .history
 *.zip
+.env.local
