@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import { MongoClient, ObjectId } from 'mongodb';
 
 // our-domain.com/[meetupId]
@@ -8,12 +9,18 @@ const MeetupDetailsPage = (props) => {
   const { image, title, address, description } = props.meetupData;
 
   return (
-    <MeetupInfo
-      image={image}
-      title={title}
-      address={address}
-      description={description}
-    />
+    <>
+      <Head>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+      </Head>
+      <MeetupInfo
+        image={image}
+        title={title}
+        address={address}
+        description={description}
+      />
+    </>
   );
 };
 
@@ -68,7 +75,7 @@ export const getStaticProps = async (context) => {
         title: selectedMeetup.title,
         address: selectedMeetup.address,
         image: selectedMeetup.image,
-        description: selectedMeetup.description
+        description: selectedMeetup.description,
       },
     },
   };
