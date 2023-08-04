@@ -45,10 +45,10 @@ export const getStaticProps = async () => {
         image: meetup.image,
         id: meetup._id.toString(),
       })),
-      // for incremental Static Generation -> this page would be regenerated on the server at least every second
-      // if there are requests coming in for this page
-      revalidate: 1,
     },
+    // for incremental Static Generation -> this page would be regenerated on the server at least every second
+    // if there are requests coming in for this page
+    revalidate: 1,
   };
 };
 
