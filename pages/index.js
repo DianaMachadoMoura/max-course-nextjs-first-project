@@ -14,7 +14,7 @@ const Home = (props) => {
           content="Browse a list of interesting React meetups"
         />
       </Head>
-      <MeetupList meetups={props.meetups} />;
+      <MeetupList meetups={props.meetups} />
     </>
   );
 };
@@ -45,9 +45,9 @@ export const getStaticProps = async () => {
         image: meetup.image,
         id: meetup._id.toString(),
       })),
-      // for incremental Static Generation -> this page would be regenerated on the server at least every 10 seconds
+      // for incremental Static Generation -> this page would be regenerated on the server at least every second
       // if there are requests coming in for this page
-      revalidate: 10,
+      revalidate: 1,
     },
   };
 };
